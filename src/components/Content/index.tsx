@@ -7,7 +7,7 @@ import About from "./About"
 import YourEvents from './YourEvents';
 import CreateEvent from './CreateEvent';
 
-export default function Pages() {
+export default function Content() {
   return (
       <Routes>
         <Route path="/" element={<Home />}></Route>

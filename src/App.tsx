@@ -1,13 +1,13 @@
 import React from 'react';
 import NavBar from './components/NavBar'
-import Pages from './components/Pages'
+import Content from './components/Content'
 
 function App() {
   
   return (
     <React.Fragment>
       <NavBar />
-      <Pages />
+      <Content />
     </React.Fragment>
   )
 }

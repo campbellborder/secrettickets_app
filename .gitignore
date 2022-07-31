@@ -7,10 +7,14 @@
 
 # testing
 /coverage
+/frpc
 
 # production
 /build
 /web3
+/typechain-types
+/artifacts
+/cache
 
 # misc
 .DS_Store
