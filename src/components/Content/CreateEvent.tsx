@@ -1,130 +1,10 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Autocomplete, Button, Stack, TextField, Chip } from '@mui/material';
-import { useMoralis, useWeb3ExecuteFunction } from "react-moralis";
+import pinataSDK from "@pinata/sdk";
+import { ethers } from "ethers";
 
-type Transaction = import('ethers').Transaction;
+import { UserContext } from "../../contexts/user-context";
 
-const abi = [
-  {
-    "inputs": [],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "_from",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "_to",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "_value",
-        "type": "uint256"
-      }
-    ],
-    "name": "Transfer",
-    "type": "event"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "balanceOf",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "name",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "symbol",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "totalSupply",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "transfer",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
-];
 
 // Store these in db or pull all possible tags from existing events
 const tags_options = ["Australian", "International", "Family-friendly"]
@@ -137,62 +17,73 @@ function CreateEventForm() {
   const [tags, setTags] = useState<string[]>([]);
   const [numTickets, setNumTickets] = useState<string>("");
 
-  const { Moralis, enableWeb3, isWeb3Enabled } = useMoralis();
-  const { data, error, fetch, isFetching, isLoading } = useWeb3ExecuteFunction();
+  const userContext = useContext(UserContext);
 
-  const readOptions = {
-    contractAddress: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-    functionName: "balanceOf",
-    abi: abi,
-    params: {
-      account: "0x385Ae6530266C6dcE15f4Af00cF639A2d5832eD7"
-    }
-  }
+  async function handleSubmit(submitEvent: any) {
 
-  const sendOptions = {
-    contractAddress: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-    functionName: "transfer",
-    abi: abi,
-    params: {
-      to: "0x385Ae6530266C6dcE15f4Af00cF639A2d5832eD7",
-      amount: 1
-    }
-  }
+    submitEvent.preventDefault()
 
-  async function handleSubmit(event: any) {
+    // CHECK IF VALID INPUTS
+
+
+
+    // Connect to smart contract
+    const contract = require("../../hh_artifacts/src/contracts/EventsV1.sol/Events.json");
+    const eventsContract = new ethers.Contract(process.env.REACT_APP_CONTRACT_ADDRESS!, contract.abi, userContext!.signer!);
     
-    event.preventDefault()
+    // Create new event
+    const response = await eventsContract.newEvent();
+    const receipt = await response.wait();
+
+    // Get new event ID
+    const event = receipt.events.find((event: any) => event.event === "NewEvent")
+    const [eventId] = event.args
+
+    // Upload to IPFS
+    // const pinata = pinataSDK(process.env.REACT_APP_PINATA_API_KEY!, process.env.REACT_APP_PINATA_SECRET_KEY!);
+    // pinata.testAuthentication().then(() => {
+
+    //   var options = {
+    //     pinataMetadata: {
+    //       name: name,
+    //       venue: venue,
+    //       category: category,
+    //       tags: tags[0],
+    //       numTickets: numTickets
+    //     }
+    //   }
+
+    //   pinata.pinJSONToIPFS(options, options).then((result) => {
+        
+    //     // Successfully uploaded!
+    //     // Go to different page?
+    //     console.log(result);
+
+
+    //   }).catch((err) => {
+    //     //handle error here
+    //     alert(`Unable to upload to IPFS:\n${err}`)
+    //   });
+
+    // }).catch((err) => {
+    //   //handle error here
+    //   alert(`Unable to authenticate IPFS:\n${err}`)
+    // });
+
+
+
+
 
     // Form validation? - think this cam be done automatically by Material UI - but need to configure
+    // const pinata = pinataSDK(process.env.PINATA_API_KEY!, process.env.PINATA_SECRET_KEY!);
 
-    // Deploy NFT smart contract
-    console.log(isWeb3Enabled)
-    if (!isWeb3Enabled) {
-      const web3Provider = await enableWeb3();
-
-    }
-
-    // fetch({params: sendOptions})
-    
-    // while(isFetching) {}
-    // console.log(data)
-
-    // fetch({params: readOptions})
-
-
-
-    
-
-    // MORALIS
-
-    // MORALIS - VANILLA JS
-    // const transaction: Transaction = await Moralis.executeFunction(sendOptions);
-    // console.log(transaction.hash);
-
-    // await transaction.wait(1);
-
-    // const message = await Moralis.executeFunction(readOptions);
-    // console.log(message);
+    //   pinata.testAuthentication().then((result: any) => {
+    //     //handle successful authentication here
+    //     console.log(result);
+    // }).catch((err:any) => {
+    //     //handle error here
+    //     console.log(err);
+    // });
 
     // ETHERS
     // const provider = await Moralis.enableWeb3({ provider: "metamask" });
@@ -249,7 +140,7 @@ function CreateEventForm() {
           freeSolo
           value={tags}
           options={tags_options}
-          onChange={(_, values: string[]) => {setTags(values)}}
+          onChange={(_, values: string[]) => { setTags(values) }}
           renderTags={(value: readonly string[], getTagProps) =>
             value.map((option: string, index: number) => (
               <Chip variant="filled" label={option} {...getTagProps({ index })} />

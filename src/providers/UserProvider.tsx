@@ -1,35 +1,42 @@
-import React from "react";
+import {ethers} from "ethers";
+import React, { useState } from "react";
 import { UserContext } from "../contexts/user-context";
-import { useMoralis } from "react-moralis";
 
-export function UserProvider(props: {children: React.ReactNode}) {
+export function UserProvider(props: { children: React.ReactNode }) {
 
-  const { authenticate, isAuthenticated, isAuthenticating, user, account, logout } = useMoralis();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [provider, setProvider] = useState<null | ethers.providers.Web3Provider>(null);
+  const [signer, setSigner] = useState<null | ethers.providers.JsonRpcSigner>(null);
+
+  async function handleSuccessfulLogin(accounts: string[]) {
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+
+    setProvider(provider);
+    setSigner(signer);
+    setIsAuthenticated(true);
+    console.log(`Connected to addr: ${accounts[0]}`);
+  }
+
+  function handleUnsuccessfulLogin(err: any) {
+    alert(`Unable to log in:\n${err.message}`);
+  }
 
   const logIn = async () => {
-    if (!isAuthenticated) {
-
-      await authenticate({ signingMessage: "Log in using Moralis" })
-        .then((user) => {
-          // Not sure what to do here
-          // Set as current user?
-          console.log("logged in user:", user);
-          console.log(user!.get("ethAddress"));
-        })
-        .catch(function (error) {
-          // Display error message?
-          console.log(error);
-        });
-    }
+    await window.ethereum.request({ method: 'eth_requestAccounts' })
+      .then(handleSuccessfulLogin)
+      .catch(handleUnsuccessfulLogin)
   }
 
   const logOut = async () => {
-    await logout();
-    // Display successful log out message?
-    console.log("logged out");
+    setIsAuthenticated(false);
+    setProvider(null);
+    setSigner(null);
+    console.log("Logged out")  
   }
 
-  const userContext = { isAuthenticated, isAuthenticating, user, account, logIn, logOut }
+  const userContext = { isAuthenticated, provider, signer, logIn, logOut }
 
   return (
     <UserContext.Provider value={userContext}>{props.children}</UserContext.Provider>

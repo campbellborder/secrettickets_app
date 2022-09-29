@@ -4,7 +4,9 @@ import "@nomicfoundation/hardhat-toolbox";
 const config: HardhatUserConfig = {
   solidity: "0.8.9",
   paths: {
-    sources: "./src/contracts"
+    sources: "./src/contracts",
+    artifacts: "./src/hh_artifacts",
+    cache: "./src/cache"
   }
 };
 

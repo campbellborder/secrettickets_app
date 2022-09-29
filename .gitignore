@@ -9,12 +9,15 @@
 /coverage
 /frpc
 
+# images
+/public/assets
+
 # production
 /build
 /web3
 /typechain-types
-/artifacts
-/cache
+/src/hh_artifacts
+/src/cache
 
 # misc
 .DS_Store

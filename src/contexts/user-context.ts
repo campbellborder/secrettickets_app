@@ -1,11 +1,10 @@
 import React from "react";
-import Moralis from "moralis/types";
+import { ethers } from "ethers";
 
 export type UserContextType = {
-  isAuthenticated: boolean,
-  isAuthenticating: boolean
-  user: Moralis.User<Moralis.Attributes> | null
-  account: string | null
+  isAuthenticated: boolean
+  provider: null | ethers.providers.Web3Provider
+  signer: null | ethers.providers.JsonRpcSigner
   logIn: () => Promise<void>
   logOut: () => Promise<void>
 }
