@@ -1,10 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { Autocomplete, Button, Stack, TextField, Chip } from '@mui/material';
-import pinataSDK from "@pinata/sdk";
-import { ethers } from "ethers";
+// import pinataSDK from "@pinata/sdk";
 
 import { UserContext } from "../../contexts/user-context";
-
 
 // Store these in db or pull all possible tags from existing events
 const tags_options = ["Australian", "International", "Family-friendly"]
@@ -24,20 +22,8 @@ function CreateEventForm() {
     submitEvent.preventDefault()
 
     // CHECK IF VALID INPUTS
+    // Form validation? - think this cam be done automatically by Material UI - but need to configure
 
-
-
-    // Connect to smart contract
-    const contract = require("../../hh_artifacts/src/contracts/EventsV1.sol/Events.json");
-    const eventsContract = new ethers.Contract(process.env.REACT_APP_CONTRACT_ADDRESS!, contract.abi, userContext!.signer!);
-    
-    // Create new event
-    const response = await eventsContract.newEvent();
-    const receipt = await response.wait();
-
-    // Get new event ID
-    const event = receipt.events.find((event: any) => event.event === "NewEvent")
-    const [eventId] = event.args
 
     // Upload to IPFS
     // const pinata = pinataSDK(process.env.REACT_APP_PINATA_API_KEY!, process.env.REACT_APP_PINATA_SECRET_KEY!);
@@ -75,25 +61,7 @@ function CreateEventForm() {
 
 
     // Form validation? - think this cam be done automatically by Material UI - but need to configure
-    // const pinata = pinataSDK(process.env.PINATA_API_KEY!, process.env.PINATA_SECRET_KEY!);
 
-    //   pinata.testAuthentication().then((result: any) => {
-    //     //handle successful authentication here
-    //     console.log(result);
-    // }).catch((err:any) => {
-    //     //handle error here
-    //     console.log(err);
-    // });
-
-    // ETHERS
-    // const provider = await Moralis.enableWeb3({ provider: "metamask" });
-    // const ethers = Moralis.web3Library;
-    // const signer = provider.getSigner();
-
-    // const contract = new ethers.Contract(address, ABI, provider);
-
-    // const transaction = await contract.connect(signer).mint();
-    // const receipt = await transaction.wait();
 
   }
 
