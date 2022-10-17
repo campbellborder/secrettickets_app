@@ -1,29 +1,44 @@
 import React, { useContext, useState } from 'react';
 import { Autocomplete, Button, Stack, TextField, Chip } from '@mui/material';
+import { coinConvert } from '@stakeordie/griptape.js';
 // import pinataSDK from "@pinata/sdk";
 
 import { UserContext } from "../../contexts/user-context";
+import { secretTickets } from "../../contracts/secretTickets"
+import { isValidAmount, isValidNumTickets } from '../../utils/utils';
 
 // Store these in db or pull all possible tags from existing events
 const tags_options = ["Australian", "International", "Family-friendly"]
 
 function CreateEventForm() {
 
-  const [name, setName] = useState<string>("");
-  const [venue, setVenue] = useState<string>("");
-  const [category, setCategory] = useState<string>("");
+  const [name, setName] = useState("");
+  const [venue, setVenue] = useState("");
+  const [category, setCategory] = useState("");
   const [tags, setTags] = useState<string[]>([]);
-  const [numTickets, setNumTickets] = useState<string>("");
+  const [numTickets, setNumTickets] = useState("");
+  const [price, setPrice] = useState("");
 
   const userContext = useContext(UserContext);
 
   async function handleSubmit(submitEvent: any) {
 
+    // Prevent default form submit
     submitEvent.preventDefault()
 
-    // CHECK IF VALID INPUTS
-    // Form validation? - think this cam be done automatically by Material UI - but need to configure
+    // Check if wallet is connected
+    if (!userContext?.isAuthenticated) {
+      alert("No wallet is connected");
+      return;
+    }
 
+    // Ensure valid number fields
+    if (!isValidNumTickets(numTickets)) return;
+    if (!isValidAmount(price, "Price")) return;
+ 
+    // Create event
+    var resp = await secretTickets.createEvent(coinConvert(price, 6, 'machine'), numTickets);
+    console.log(resp);
 
     // Upload to IPFS
     // const pinata = pinataSDK(process.env.REACT_APP_PINATA_API_KEY!, process.env.REACT_APP_PINATA_SECRET_KEY!);
@@ -40,7 +55,7 @@ function CreateEventForm() {
     //   }
 
     //   pinata.pinJSONToIPFS(options, options).then((result) => {
-        
+
     //     // Successfully uploaded!
     //     // Go to different page?
     //     console.log(result);
@@ -55,13 +70,6 @@ function CreateEventForm() {
     //   //handle error here
     //   alert(`Unable to authenticate IPFS:\n${err}`)
     // });
-
-
-
-
-
-    // Form validation? - think this cam be done automatically by Material UI - but need to configure
-
 
   }
 
@@ -122,7 +130,7 @@ function CreateEventForm() {
           )}
         />
 
-        {/* Price bands (new page?) */}
+        {/* Number of tickets */}
         <TextField
           required
           name="num-tickets"
@@ -133,9 +141,18 @@ function CreateEventForm() {
           }}
         />
 
-        {/* Third page for description? */}
+        {/* Price */}
+        <TextField
+          required
+          name="price"
+          label="Price (SCRT)"
+          value={price}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setPrice(event.currentTarget.value);
+          }}
+        />
 
-
+        {/* Submit button */}
         <Button type="submit" variant="outlined">Submit</Button>
       </Stack>
     </form>)

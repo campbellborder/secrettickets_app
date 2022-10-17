@@ -11,7 +11,7 @@ import {
 } from '@stakeordie/griptape.js';
 
 const config = {
-  restUrl: 'https://api.pulsar.griptapejs.com',
+  restUrl: 'https://pulsar-2.api.trivium.network:1317',
   defaultFees: {
     upload: 500000,
     init: 100000,

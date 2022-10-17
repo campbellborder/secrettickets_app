@@ -61,7 +61,7 @@ export function UserMenu() {
         {/* Show different options based on authentication status */}
         {userContext?.isAuthenticated
           ? (<div>
-            <UserMenuLink onClick={handleClose} text="Account?" to="account" />
+            <UserMenuLink onClick={handleClose} text="Account" to="account" />
             <UserMenuLink onClick={handleClose} text="Your Events" to="your-events" />
             <Divider />
             <MenuItem onClick={() => { handleClose(); userContext?.logOut() }}>Logout</MenuItem>

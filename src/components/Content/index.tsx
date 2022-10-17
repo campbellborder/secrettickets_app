@@ -6,15 +6,17 @@ import Events from "./Events"
 import About from "./About"
 import YourEvents from './YourEvents';
 import CreateEvent from './CreateEvent';
+import Account from './Account';
 
 export default function Content() {
   return (
       <Routes>
-        <Route path="/" element={<Home />}></Route>
-        <Route path="events" element={<Events />}></Route>
-        <Route path="about" element={<About />}></Route>
-        <Route path="your-events" element={<YourEvents />}></Route>
-        <Route path="your-events/create" element={<CreateEvent />}></Route>
+        <Route path="/" element={<Home /> } />
+        <Route path="events" element={<Events /> } />
+        <Route path="about" element={<About /> } />
+        <Route path="your-events" element={<YourEvents /> } />
+        <Route path="your-events/create" element={<CreateEvent /> } />
+        <Route path="account" element={<Account /> } />
       </Routes>
   )
 }
