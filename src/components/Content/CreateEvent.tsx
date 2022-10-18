@@ -1,7 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { Autocomplete, Button, Stack, TextField, Chip } from '@mui/material';
 import { coinConvert } from '@stakeordie/griptape.js';
-// import pinataSDK from "@pinata/sdk";
+import NodeFormData from 'form-data';
+import axios from 'axios';
 
 import { UserContext } from "../../contexts/user-context";
 import { secretTickets } from "../../contracts/secretTickets"
@@ -18,6 +19,7 @@ function CreateEventForm() {
   const [tags, setTags] = useState<string[]>([]);
   const [numTickets, setNumTickets] = useState("");
   const [price, setPrice] = useState("");
+  const [image, setImage] = useState<File | null>(null);
 
   const userContext = useContext(UserContext);
 
@@ -35,42 +37,66 @@ function CreateEventForm() {
     // Ensure valid number fields
     if (!isValidNumTickets(numTickets)) return;
     if (!isValidAmount(price, "Price")) return;
- 
+
     // Create event
     var resp = await secretTickets.createEvent(coinConvert(price, 6, 'machine'), numTickets);
-    console.log(resp);
+    const logs = resp.getRaw().logs;
+    const events = logs![0].events;
+    var event_id = null;
+    events.forEach(event => {
+      if (event.type === "wasm") {
+        event.attributes.forEach(attribute => {
+          if (attribute.key === "event_id") {
+            event_id = attribute.value;
+          }
+        })
+      }
+    });
 
-    // Upload to IPFS
-    // const pinata = pinataSDK(process.env.REACT_APP_PINATA_API_KEY!, process.env.REACT_APP_PINATA_SECRET_KEY!);
-    // pinata.testAuthentication().then(() => {
+    // Check if valid event id returned
+    if (!event_id) {
+      alert("Unable to parse transaction response");
+      return;
+    }
 
-    //   var options = {
-    //     pinataMetadata: {
-    //       name: name,
-    //       venue: venue,
-    //       category: category,
-    //       tags: tags[0],
-    //       numTickets: numTickets
-    //     }
-    //   }
+    // Construct metadata
+    var metadata: { name: string, keyvalues: {[key: string]: string} } = {
+      name: name,
+      keyvalues: {
+        event_id: event_id,
+        venue: venue,
+        category: category,
+        numtags: tags.length.toString(),
+        price: price
+      }
+    }
 
-    //   pinata.pinJSONToIPFS(options, options).then((result) => {
+    // Add tags
+    var i = 0
+    tags.forEach((tag: string) => {
+      metadata.keyvalues[('tag' + i)] = tag;
+      i = i + 1;
+    })
 
-    //     // Successfully uploaded!
-    //     // Go to different page?
-    //     console.log(result);
+    // Create data to pin
+    const data = new NodeFormData();
+    data.append("file", image!);
+    data.append("pinataMetadata", JSON.stringify(metadata));
 
+    // Pin data to IPFS
+    await axios.post(
+      'https://api.pinata.cloud/pinning/pinFileToIPFS',
+      data,
+      {
+        withCredentials: true,
+        maxContentLength: -1,
+        maxBodyLength: -1,
+        headers: {
+          'Authorization': `Bearer ${process.env.REACT_APP_PINATA_JWT}`,
+        }
+      })
 
-    //   }).catch((err) => {
-    //     //handle error here
-    //     alert(`Unable to upload to IPFS:\n${err}`)
-    //   });
-
-    // }).catch((err) => {
-    //   //handle error here
-    //   alert(`Unable to authenticate IPFS:\n${err}`)
-    // });
-
+    alert("Event successfully created!");
   }
 
   return (
@@ -151,6 +177,15 @@ function CreateEventForm() {
             setPrice(event.currentTarget.value);
           }}
         />
+
+        {/* Image */}
+        <input
+          required
+          type="file"
+          name="image"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setImage(event.currentTarget.files![0])
+          }} />
 
         {/* Submit button */}
         <Button type="submit" variant="outlined">Submit</Button>

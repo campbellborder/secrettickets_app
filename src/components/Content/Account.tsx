@@ -69,7 +69,6 @@ export default function Account() {
       <h4>Your SCRT balance: {SCRTbalance}</h4>
       <h4>Your TICK balance: {TICKbalance}</h4>
       <TextField
-        required
         name="deposit-amount"
         label="Amount"
         value={depositAmount}
@@ -79,7 +78,6 @@ export default function Account() {
       />
       <Button variant="outlined" onClick={make_deposit}>Deposit</Button>
       <TextField
-        required
         name="withdraw-amount"
         label="Amount"
         value={withdrawAmount}

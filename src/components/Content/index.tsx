@@ -2,7 +2,7 @@ import React from 'react';
 import {Routes, Route} from "react-router-dom";
 
 import Home from "./Home"
-import Events from "./Events"
+// import Events from "./Events"
 import About from "./About"
 import YourEvents from './YourEvents';
 import CreateEvent from './CreateEvent';
@@ -12,7 +12,7 @@ export default function Content() {
   return (
       <Routes>
         <Route path="/" element={<Home /> } />
-        <Route path="events" element={<Events /> } />
+        {/* <Route path="events" element={<Events /> } /> */}
         <Route path="about" element={<About /> } />
         <Route path="your-events" element={<YourEvents /> } />
         <Route path="your-events/create" element={<CreateEvent /> } />

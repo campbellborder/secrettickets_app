@@ -18,7 +18,7 @@ function NavButton(props: { text: string, to: string }) {
 export function NavItems() {
   return (
     <Box >
-      <NavButton text="Events" to="events" />
+      {/* <NavButton text="Events" to="events" /> */}
       <NavButton text="About" to="about" />
     </Box>
   )

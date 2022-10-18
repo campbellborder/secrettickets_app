@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { UserContext } from "../contexts/user-context";
-import { bootstrap, shutdown, getAddress, onAccountChange, onAccountDisconnect } from '@stakeordie/griptape.js';
+import { bootstrap, shutdown, getAddress } from '@stakeordie/griptape.js';
 
 export function UserProvider(props: { children: React.ReactNode }) {
 

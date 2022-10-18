@@ -6,7 +6,6 @@ import {
     createContractClient,
     Context
   } from '@stakeordie/griptape.js';
-import { UIValueString } from '@testing-library/user-event/dist/types/document/UI';
 
   interface SecretTickets {
     deposit(amount: string): Promise<ContractMessageResponse<any>>;
@@ -17,6 +16,8 @@ import { UIValueString } from '@testing-library/user-event/dist/types/document/U
     verifyGuest(ticket_id: string, secret: number): Promise<ContractMessageResponse<any>>;
     isSoldOut(event_id: string): Promise<{is_sold_out: boolean}>;
     balance(address: string): Promise<{balance: number}>;
+    events(address: string): Promise<{events: number[]}>;
+    tickets(address: string): Promise<{tickets: number[], events: number[]}>;
   }
 
   const contractDef: ContractDefinition = {
@@ -25,7 +26,13 @@ import { UIValueString } from '@testing-library/user-event/dist/types/document/U
             return { event_sold_out: { event_id} };
         },
         balance(_: Context, address: string) : ContractQueryRequest {
-          return { balance: { address }}
+          return { balance: { address } }
+        },
+        events(_: Context, address: string) : ContractQueryRequest {
+          return { events: { address } }
+        },
+        tickets(_: Context, address: string) : ContractQueryRequest {
+          return { tickets: { address } }
         }
     },
 
@@ -39,8 +46,12 @@ import { UIValueString } from '@testing-library/user-event/dist/types/document/U
         const handleMsg = { withdraw: { amount } };
         return { handleMsg };
       },
-      createEvent(_: Context, price: string, max_tickets: number): ContractMessageRequest {
+      createEvent(_: Context, price: string, max_tickets: string): ContractMessageRequest {
         const handleMsg = { create_event: { price, max_tickets} }
+        return { handleMsg };
+      },
+      buyTicket(_: Context, event_id: string): ContractMessageRequest {
+        const handleMsg = { buy_ticket: { event_id } };
         return { handleMsg };
       }
     }
@@ -48,6 +59,6 @@ import { UIValueString } from '@testing-library/user-event/dist/types/document/U
 
 
 export const secretTickets = createContractClient<SecretTickets>({
-  at: "secret1h3dh4uf4ukxjyaudvj4t5ss3xnxp6e3gktrftj",
+  at: "secret1fq567acajzcmzt758htctvcf8sxysae7969se2",
   definition: contractDef
 });
