@@ -45,7 +45,6 @@ export default function EventsPanelAttending() {
 
     // Check if wallet is connected
     if (!userContext?.isAuthenticated) {
-      alert("No wallet is connected");
       return;
     }
 
@@ -95,7 +94,7 @@ export default function EventsPanelAttending() {
       alert("Unable to load events")
       console.log(error)
     })
-  }, [userContext?.isAuthenticated])
+  }, [userContext?.address])
 
   const ticketWidth = 250;
 

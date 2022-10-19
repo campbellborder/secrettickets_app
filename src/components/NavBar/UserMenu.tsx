@@ -63,6 +63,7 @@ export function UserMenu() {
           ? (<div>
             <UserMenuLink onClick={handleClose} text="Account" to="account" />
             <UserMenuLink onClick={handleClose} text="Your Events" to="your-events" />
+            <UserMenuLink onClick={handleClose} text="Create Event" to="create-event" />
             <Divider />
             <MenuItem onClick={() => { handleClose(); userContext?.logOut() }}>Logout</MenuItem>
           </div>)

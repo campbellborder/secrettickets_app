@@ -15,7 +15,7 @@ export default function Content() {
         {/* <Route path="events" element={<Events /> } /> */}
         <Route path="about" element={<About /> } />
         <Route path="your-events" element={<YourEvents /> } />
-        <Route path="your-events/create" element={<CreateEvent /> } />
+        <Route path="create-event" element={<CreateEvent /> } />
         <Route path="account" element={<Account /> } />
       </Routes>
   )

@@ -1,37 +1,50 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { UserContext } from "../contexts/user-context";
-import { bootstrap, shutdown, getAddress } from '@stakeordie/griptape.js';
+import { bootstrap, shutdown, getAddress, onAccountChange } from '@stakeordie/griptape.js';
 
 export function UserProvider(props: { children: React.ReactNode }) {
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [address, setAddress] = useState("");
 
-  async function handleSuccessfulLogin() {
+  const handleSuccessfulLogin = () => {
 
     setIsAuthenticated(true);
     const address = getAddress();
+    setAddress(address!);
     console.log(`Bootstrapped with address ${address}`);
   }
 
-  function handleUnsuccessfulLogin(err: any) {
+  const handleUnsuccessfulLogin = (err: any) => {
     alert(`Unable to log in:\n${err.message}`);
   }
 
   const logIn = async () => {
-    console.log("Login clicked")
     await bootstrap()
       .then(handleSuccessfulLogin)
       .catch(handleUnsuccessfulLogin)
   }
 
   const logOut = async () => {
-    console.log("Logout clicked")
     setIsAuthenticated(false);
     shutdown();
     console.log("Shutdown");
   }
 
-  const userContext = {isAuthenticated, logIn, logOut}
+  const userContext = {isAuthenticated, address, logIn, logOut}
+
+  useEffect(() => {
+      const remove = onAccountChange(() => {
+        handleSuccessfulLogin()
+      })
+  
+      return () => {
+        if (isAuthenticated) {
+          remove();
+        }
+      }
+
+  }, [])
 
   return (
     <UserContext.Provider value={userContext}>{props.children}</UserContext.Provider>

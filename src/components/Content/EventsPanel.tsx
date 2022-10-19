@@ -31,7 +31,6 @@ function Event(props: { event: EventInfo, width: number}) {
     secretTickets.buyTicket(props.event.id).then(() => {
       alert("Successfully purchased ticket.")
     }).catch((error) => {
-      console.log(error.cause)
       alert(`Unable to buy ticket:\n${error.cause}`)
     })
   }

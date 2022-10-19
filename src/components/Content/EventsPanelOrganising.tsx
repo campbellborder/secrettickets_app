@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Autocomplete, Button, Stack, TextField, Chip } from '@mui/material';
-
 import pinataSDK from "@pinata/sdk";
 import { getAddress } from '@stakeordie/griptape.js';
 
 import { UserContext } from "../../contexts/user-context";
 import { secretTickets } from "../../contracts/secretTickets"
-
 
 interface EventInfo {
   id: string,
@@ -17,58 +14,17 @@ interface EventInfo {
   cid: string
 }
 
-function Event(props: { event: EventInfo, width: number}) {
-
-  const userContext = useContext(UserContext);
-
-  const [ticketID, setTicketID] = useState("");
-  const [guestTicketID, setGuestTicketID] = useState("");
-  const [guestSecret, setGuestSecret] = useState("");
+function Event(props: { event: EventInfo, width: number }) {
 
   const widthString = props.width.toString() + "px"
 
-  const verify_ticket = async () => {
-    console.log("verifying ticket")
-  }
-
-  const verify_guest = async () => {
-    console.log("verifying guest")
-  }
-
   return (
-    <li style={{ display: "block", height: "500px", width: widthString, background: "red", margin: "15px" }}>
+    <li style={{ display: "block", height: "220px", width: widthString, background: "red", margin: "15px" }}>
       {/* Image */}
       <img src={`https://gateway.pinata.cloud/ipfs/${props.event.cid}`} alt="Event"></img>
       {/* Description */}
       <h4>{props.event.name}</h4>
       <h5>{props.event.venue}</h5>
-      {/* Verify ticket */}
-      <TextField
-          name="ticket-id"
-          label="Ticket ID"
-          value={ticketID}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setTicketID(event.currentTarget.value);
-          }}
-        />
-        <Button variant="outlined" onClick={verify_ticket}>Verify ticket</Button>
-        <TextField
-          name="guest-ticket-id"
-          label="Ticket ID"
-          value={guestTicketID}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setGuestTicketID(event.currentTarget.value);
-          }}
-        />
-        <TextField
-          name="guest-secret"
-          label="Secret"
-          value={guestSecret}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setGuestSecret(event.currentTarget.value);
-          }}
-        />
-        <Button variant="outlined" onClick={verify_guest}>Verify guest</Button>
 
     </li>
   )
@@ -87,13 +43,11 @@ export default function EventsPanelOrganising() {
 
     // Check if wallet is connected
     if (!userContext?.isAuthenticated) {
-      alert("No wallet is connected");
       return;
     }
 
     const resp = await secretTickets.events(getAddress()!);
     const event_ids = resp.events;
-    console.log(resp)
 
     let events = []
     for (let i = 0; i < event_ids.length; i++) {
@@ -135,9 +89,9 @@ export default function EventsPanelOrganising() {
       alert("Unable to load events")
       console.log(error)
     })
-  }, [userContext?.isAuthenticated])
+  }, [userContext?.address])
 
-  const eventWidth = 250;
+  const eventWidth = 250
 
   // Create list of events
   var EventsList = events.map((event) => {
@@ -149,7 +103,7 @@ export default function EventsPanelOrganising() {
   return (
     <div>
       <h3>Organising</h3>
-      <div style={{ background: "green", width: "100%", height: "530px", overflowX: "auto", overflowY: "hidden" }}>
+      <div style={{ background: "green", width: "100%", height: "250px", overflowX: "auto", overflowY: "hidden" }}>
         <ul style={{ listStyleType: "none", display: "flex", margin: "0", "padding": "0", width: listWidth }}>
           {EventsList}
         </ul>

@@ -13,7 +13,7 @@ import {
     createEvent(price: string, max_tickets: string): Promise<ContractMessageResponse<any>>;
     buyTicket(event_id: string): Promise<ContractMessageResponse<any>>;
     verifyTicket(ticket_id: string): Promise<ContractMessageResponse<any>>;
-    verifyGuest(ticket_id: string, secret: number): Promise<ContractMessageResponse<any>>;
+    verifyGuest(ticket_id: string, secret: string): Promise<ContractMessageResponse<any>>;
     isSoldOut(event_id: string): Promise<{is_sold_out: boolean}>;
     balance(address: string): Promise<{balance: number}>;
     events(address: string): Promise<{events: number[]}>;
@@ -52,6 +52,14 @@ import {
       },
       buyTicket(_: Context, event_id: string): ContractMessageRequest {
         const handleMsg = { buy_ticket: { event_id } };
+        return { handleMsg };
+      },
+      verifyTicket(_: Context, ticket_id: string): ContractMessageRequest {
+        const handleMsg = { verify_ticket: { ticket_id }};
+        return { handleMsg };
+      },
+      verifyGuest(_: Context, ticket_id: string, secret: string): ContractMessageRequest {
+        const handleMsg = { verify_guest: {ticket_id, secret } };
         return { handleMsg };
       }
     }

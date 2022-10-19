@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { UserProvider } from './providers/UserProvider';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 import {
   gripApp,
@@ -27,11 +28,13 @@ function runApp() {
   );
   root.render(
     <React.StrictMode>
+      {/* <ErrorBoundary> */}
         <UserProvider>
           <BrowserRouter>
             <App />
           </BrowserRouter>
         </UserProvider>
+        {/* </ErrorBoundary> */}
     </React.StrictMode>
   );
 }
