@@ -1,5 +1,4 @@
 import React, { useContext, useState } from 'react';
-import { Link } from "react-router-dom"
 import EventsPanelAttending from './EventsPanelAttending';
 import EventsPanelOrganising from './EventsPanelOrganising';
 import { Button, TextField } from '@mui/material';
@@ -15,7 +14,7 @@ export default function YourEvents() {
   const [encryptedSecret, setEncryptedSecret] = useState("");
   const [secret, setSecret] = useState("");
 
-  const verify_ticket = async () => {
+  const verifyTicket = async () => {
     // Check if wallet is connected
     if (!userContext?.isAuthenticated) {
       alert("No wallet is connected");
@@ -45,14 +44,14 @@ export default function YourEvents() {
         }
       });
 
-      alert(`Encrypted secret is:\n${Number(secret_encrypted).toString(16)}`)
+      alert(`Encrypted secret is:\n${secret_encrypted}`)
     }).catch((err) => {
       alert(`Unable to verify ticket:\n${err.cause}`)
     })
 
   }
 
-  const verify_guest = async () => {
+  const verifyGuest = async () => {
     // Check if wallet is connected
     if (!userContext?.isAuthenticated) {
       alert("No wallet is connected");
@@ -83,6 +82,10 @@ export default function YourEvents() {
 
   }
 
+  const decryptSecret = async () => {
+
+  }
+
   return (
     <div>
       <h1>Your Events</h1>
@@ -95,7 +98,7 @@ export default function YourEvents() {
           setEncryptedSecret(event.currentTarget.value);
         }}
       />
-      <Button variant="outlined" onClick={verify_ticket}>Decrypt secret</Button>
+      <Button variant="outlined" onClick={decryptSecret}>Decrypt secret</Button>
       <EventsPanelOrganising />
       {/* Verify ticket */}
       <h3>Verify tickets and guests</h3>
@@ -115,8 +118,8 @@ export default function YourEvents() {
           setSecret(event.currentTarget.value);
         }}
       />
-      <Button variant="outlined" onClick={verify_ticket}>Verify ticket</Button>
-      <Button variant="outlined" onClick={verify_guest}>Verify guest</Button>
+      <Button variant="outlined" onClick={verifyTicket}>Verify ticket</Button>
+      <Button variant="outlined" onClick={verifyGuest}>Verify guest</Button>
     </div>
   )
 } 

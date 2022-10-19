@@ -3,7 +3,6 @@ import {Routes, Route} from "react-router-dom";
 
 import Home from "./Home"
 // import Events from "./Events"
-import About from "./About"
 import YourEvents from './YourEvents';
 import CreateEvent from './CreateEvent';
 import Account from './Account';
@@ -13,7 +12,6 @@ export default function Content() {
       <Routes>
         <Route path="/" element={<Home /> } />
         {/* <Route path="events" element={<Events /> } /> */}
-        <Route path="about" element={<About /> } />
         <Route path="your-events" element={<YourEvents /> } />
         <Route path="create-event" element={<CreateEvent /> } />
         <Route path="account" element={<Account /> } />

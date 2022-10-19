@@ -10,14 +10,14 @@ import {
   interface SecretTickets {
     deposit(amount: string): Promise<ContractMessageResponse<any>>;
     withdraw(amount: string): Promise<ContractMessageResponse<any>>;
-    createEvent(price: string, max_tickets: string): Promise<ContractMessageResponse<any>>;
-    buyTicket(event_id: string): Promise<ContractMessageResponse<any>>;
+    createEvent(price: string, max_tickets: string, entropy: string): Promise<ContractMessageResponse<any>>;
+    buyTicket(event_id: string, entropy: string): Promise<ContractMessageResponse<any>>;
     verifyTicket(ticket_id: string): Promise<ContractMessageResponse<any>>;
     verifyGuest(ticket_id: string, secret: string): Promise<ContractMessageResponse<any>>;
     isSoldOut(event_id: string): Promise<{is_sold_out: boolean}>;
     balance(address: string): Promise<{balance: number}>;
     events(address: string): Promise<{events: number[]}>;
-    tickets(address: string): Promise<{tickets: number[], events: number[]}>;
+    tickets(address: string): Promise<{tickets: number[], events: number[], states: number[]}>;
   }
 
   const contractDef: ContractDefinition = {
@@ -46,12 +46,12 @@ import {
         const handleMsg = { withdraw: { amount } };
         return { handleMsg };
       },
-      createEvent(_: Context, price: string, max_tickets: string): ContractMessageRequest {
-        const handleMsg = { create_event: { price, max_tickets} }
+      createEvent(_: Context, price: string, max_tickets: string, entropy: string): ContractMessageRequest {
+        const handleMsg = { create_event: { price, max_tickets, entropy} }
         return { handleMsg };
       },
-      buyTicket(_: Context, event_id: string): ContractMessageRequest {
-        const handleMsg = { buy_ticket: { event_id } };
+      buyTicket(_: Context, event_id: string, entropy: string): ContractMessageRequest {
+        const handleMsg = { buy_ticket: { event_id, entropy } };
         return { handleMsg };
       },
       verifyTicket(_: Context, ticket_id: string): ContractMessageRequest {
@@ -67,6 +67,6 @@ import {
 
 
 export const secretTickets = createContractClient<SecretTickets>({
-  at: "secret1fq567acajzcmzt758htctvcf8sxysae7969se2",
+  at: "secret13f8h82muue8xulzhrzgcp60qck9uxamn56ug4s",
   definition: contractDef
 });

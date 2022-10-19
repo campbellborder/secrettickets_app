@@ -13,6 +13,7 @@ interface TicketInfo {
   venue: string,
   category: string,
   tags: string[]
+  state: number
   cid: string
 }
 
@@ -20,14 +21,26 @@ function Ticket(props: { ticket: TicketInfo, width: number }) {
 
   const widthString = props.width.toString() + "px"
 
+  function num_to_state(num: Number) {
+    switch (num) {
+      case 0:
+        return "UNUSED";
+      case 1:
+        return "VALIDATING";
+      case 2:
+        return "USED";
+    }
+  }
+
   return (
-    <li style={{ display: "block", height: "250px", width: widthString, background: "red", margin: "15px" }}>
+    <li style={{ display: "block", height: "280px", width: widthString, background: "red", margin: "15px" }}>
       {/* Image */}
       <img src={`https://gateway.pinata.cloud/ipfs/${props.ticket.cid}`} alt="Event"></img>
       {/* Description */}
       <h4>{props.ticket.name}</h4>
       <h5>{props.ticket.venue}</h5>
       <h5>Ticket ID: {props.ticket.ticket_id}</h5>
+      <h5>State: {num_to_state(props.ticket.state)}</h5>
     </li>
   )
 }
@@ -51,11 +64,14 @@ export default function EventsPanelAttending() {
     const resp = await secretTickets.tickets(getAddress()!);
     const ticket_ids = resp.tickets;
     const event_ids = resp.events;
+    const states = resp.states;
+    console.log(states)
 
     let tickets = []
     for (let i = 0; i < event_ids.length; i++) {
       const event_id = event_ids[i];
       const ticket_id = ticket_ids[i];
+      const state = Number(states[i]);
       const filter = {
         status: 'pinned',
         metadata: {
@@ -77,6 +93,7 @@ export default function EventsPanelAttending() {
         venue: metadata.keyvalues.venue,
         category: metadata.keyvalues.category,
         tags: [],
+        state: state,
         cid: event.ipfs_pin_hash
       }
       for (let i = 0; i < Number(metadata.keyvalues.numTags); i++) {
@@ -108,7 +125,7 @@ export default function EventsPanelAttending() {
   return (
     <div>
       <h3>Attending</h3>
-      <div style={{ background: "green", width: "100%", height: "280px", overflowX: "auto", overflowY: "hidden" }}>
+      <div style={{ background: "green", width: "100%", height: "310px", overflowX: "auto", overflowY: "hidden" }}>
         <ul style={{ listStyleType: "none", display: "flex", margin: "0", "padding": "0", width: listWidth }}>
           {TicketsList}
         </ul>

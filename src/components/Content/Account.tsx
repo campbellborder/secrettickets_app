@@ -41,15 +41,21 @@ export default function Account() {
 
   const make_deposit = async () => {
     if (isValidAmount(depositAmount, "Deposit amount")) {
-      let resp = await secretTickets.deposit(coinConvert(depositAmount, 6, 'machine'));
-      console.log(resp);
+      secretTickets.deposit(coinConvert(depositAmount, 6, 'machine')).then(() => {
+        getAccountInfo();
+      }).catch((err) => {
+        alert(`Error with deposit:\n${err.cause}`)
+      })
     }
   }
 
   const make_withdrawal = async () => {
     if (isValidAmount(withdrawAmount, "Withdraw amount")) {
-      let resp = await secretTickets.withdraw(coinConvert(withdrawAmount, 6, 'machine'));
-      console.log(resp);
+      secretTickets.withdraw(coinConvert(withdrawAmount, 6, 'machine')).then(() => {
+        getAccountInfo();
+      }).catch((err) => {
+        alert(`Error with deposit:\n${err.cause}`)
+      })
     }
   }
 

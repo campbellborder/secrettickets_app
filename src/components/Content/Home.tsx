@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import pinataSDK, {PinataPinListResponseRow} from "@pinata/sdk";
+import React, { useState, useEffect } from 'react';
+import pinataSDK, { PinataPinListResponseRow } from "@pinata/sdk";
 
 import EventsPanel from './EventsPanel';
 
@@ -18,7 +18,7 @@ export default function Home() {
       const events = await pinata.pinList(filter);
       setEvents(events.rows);
     }
-    
+
     load_events().catch((error) => {
       alert("Unable to load events")
     })
@@ -34,16 +34,18 @@ export default function Home() {
   })
 
   const EventsPanels = categories.map((category: string) => {
-    return <EventsPanel key={category} type={category}/>
+    return <EventsPanel key={category} type={category} />
   })
 
   return (
     <React.Fragment>
-    <h1>NFTickets</h1>
-    <h2>The Future of Ticketing</h2>
-    <ul>
-      {EventsPanels}
-    </ul>
+      <div>
+        <h1 style={{ textAlign: "center" }}>NFTickets</h1>
+        <h2 style={{ textAlign: "center" }} >The Future of Ticketing</h2>
+      </div>
+      <ul>
+        {EventsPanels}
+      </ul>
     </React.Fragment>
   )
 } 

@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { UserProvider } from './providers/UserProvider';
-import { ErrorBoundary } from './components/ErrorBoundary';
+// import { ErrorBoundary } from './components/ErrorBoundary';
 
 import {
   gripApp,
@@ -41,6 +41,7 @@ function runApp() {
 
 
 gripApp(config, provider, runApp);
+
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

@@ -15,7 +15,7 @@ export default function NavBar() {
             <Logo />
 
             {/* Navigation items */}
-            <NavItems />
+            {/* <NavItems /> */}
 
             {/* User menu */}
             <UserMenu />

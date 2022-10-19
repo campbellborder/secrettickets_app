@@ -12,7 +12,6 @@ export function UserProvider(props: { children: React.ReactNode }) {
     setIsAuthenticated(true);
     const address = getAddress();
     setAddress(address!);
-    console.log(`Bootstrapped with address ${address}`);
   }
 
   const handleUnsuccessfulLogin = (err: any) => {

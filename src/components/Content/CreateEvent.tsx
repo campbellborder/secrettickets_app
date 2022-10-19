@@ -6,7 +6,7 @@ import axios from 'axios';
 
 import { UserContext } from "../../contexts/user-context";
 import { secretTickets } from "../../contracts/secretTickets"
-import { isValidAmount, isValidNumTickets } from '../../utils/utils';
+import { isValidAmount, isValidNumTickets, generateEntropyString } from '../../utils/utils';
 
 // Store these in db or pull all possible tags from existing events
 const tags_options = ["Australian", "International", "Family-friendly"]
@@ -39,7 +39,8 @@ function CreateEventForm() {
     if (!isValidAmount(price, "Price")) return;
 
     // Create event
-    var resp = await secretTickets.createEvent(coinConvert(price, 6, 'machine'), numTickets);
+    const entropy = generateEntropyString();
+    var resp = await secretTickets.createEvent(coinConvert(price, 6, 'machine'), numTickets, entropy);
     const logs = resp.getRaw().logs;
     const events = logs![0].events;
     var event_id = null;
