@@ -16,7 +16,7 @@ export function Logo() {
         alt="logo"
         style={{ height: 50 }}
       />
-      <Typography variant="h5" sx={{ color: "black", paddingLeft:"10px"}}>SecreTickets</Typography>
+      <Typography variant="h5" sx={{ color: "black", paddingLeft:"10px"}}>secretickets.</Typography>
     </Box>
   )
 }

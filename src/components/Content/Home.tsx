@@ -41,8 +41,8 @@ export default function Home() {
   return (
     <React.Fragment>
       <div>
-        <Typography variant="h2" style={{ textAlign: "center", margin: "20px" }}>SecreTickets</Typography>
-        <Typography variant="h5" style={{ textAlign: "center" }} >Private. Trustless. Awesome.</Typography>
+        <Typography variant="h2" style={{ textAlign: "center", margin: "20px" }}>secretickets.</Typography>
+        <Typography variant="h5" style={{ textAlign: "center" }} >private. trustless. secure.</Typography>
       </div>
       {EventsPanels.length
         ? <ul>
