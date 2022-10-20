@@ -28,7 +28,6 @@ export function UserProvider(props: { children: React.ReactNode }) {
     setIsAuthenticated(false);
     setAddress("");
     shutdown();
-    console.log("Shutdown");
   }
 
   const userContext = {isAuthenticated, address, logIn, logOut}

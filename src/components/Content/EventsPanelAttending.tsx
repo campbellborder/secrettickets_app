@@ -34,17 +34,16 @@ function Ticket(props: { ticket: TicketInfo, width: number }) {
   }
 
   return (
-    <li style={{width: widthString, margin: "10px 20px"}}>
-      <Card elevation={5}>
-      {/* Image */}
-      <img src={`https://gateway.pinata.cloud/ipfs/${props.ticket.cid}`} alt="Event"></img>
-      {/* Description */}
-      <div style={{padding: "0px 10px"}}>
-      <Typography variant="body2" style={{margin: "10px 0px 0px 0px"}}>{props.ticket.name}</Typography>
-      <Typography variant="body2" style={{margin: "20px 0px 0px 0px"}}>{props.ticket.venue}</Typography>
-      <Typography variant="body2" style={{margin: "0px 0px 0px 0px"}}>Ticket ID: {props.ticket.ticket_id}</Typography>
-      <Typography variant="body2" style={{margin: "20px 0px 10px 0px"}}>State: {num_to_state(props.ticket.state)}</Typography>
-      </div>
+    <li style={{ width: widthString, margin: "10px 20px" }}>
+      <Card elevation={5} style={{ width: widthString }}>      {/* Image */}
+        <img src={`https://aqua-additional-bat-799.mypinata.cloud/ipfs/${props.ticket.cid}`} alt="Event"></img>
+        {/* Description */}
+        <div style={{ padding: "0px 10px" }}>
+          <Typography variant="body2" style={{ margin: "10px 0px 0px 0px" }}>{props.ticket.name}</Typography>
+          <Typography variant="body2" style={{ margin: "20px 0px 0px 0px" }}>{props.ticket.venue}</Typography>
+          <Typography variant="body2" style={{ margin: "0px 0px 0px 0px" }}>Ticket ID: {props.ticket.ticket_id}</Typography>
+          <Typography variant="body2" style={{ margin: "20px 0px 10px 0px" }}>State: {num_to_state(props.ticket.state)}</Typography>
+        </div>
       </Card>
     </li>
   )
@@ -72,7 +71,6 @@ export default function EventsPanelAttending() {
     const ticket_ids = resp.tickets;
     const event_ids = resp.events;
     const states = resp.states;
-    console.log(states)
 
     let tickets = []
     for (let i = 0; i < event_ids.length; i++) {
@@ -119,7 +117,6 @@ export default function EventsPanelAttending() {
     setLoading(true);
     load_tickets().catch((error) => {
       alert("Unable to load events")
-      console.log(error)
     })
   }, [userContext?.address])
 
@@ -134,15 +131,15 @@ export default function EventsPanelAttending() {
 
   return (
     <div>
-      <Typography variant="h5" style={{marginLeft: "20px", marginBottom: "10px"}}>Attending</Typography>
+      <Typography variant="h5" style={{ marginLeft: "20px", marginBottom: "10px" }}>Attending</Typography>
       <div style={{ width: "100%", overflowX: "auto" }}>
-      {TicketsList.length ?
+        {TicketsList.length ?
           <ul style={{ listStyleType: "none", display: "flex", margin: "0", "padding": "0", width: listWidth, height: "100%" }}>
             {TicketsList}
           </ul>
           : loading
-            ? <Typography variant="body1" style={{margin: "40px"}}>Loading...</Typography>
-            : <Typography variant="body1" style={{margin: "40px"}}>You are not attending any events</Typography>
+            ? <Typography variant="body1" style={{ margin: "40px" }}>Loading...</Typography>
+            : <Typography variant="body1" style={{ margin: "40px" }}>You are not attending any events</Typography>
         }
       </div>
     </div>

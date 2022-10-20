@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import pinataSDK from "@pinata/sdk";
-import { Button, Card, Typography } from '@mui/material';
+import { Button, Card, Typography, TextField } from '@mui/material';
+import { pki } from "node-forge";
 
 import { UserContext } from "../../contexts/user-context";
 import { secretTickets } from "../../contracts/secretTickets"
-import { generateEntropyString } from '../../utils/utils';
+import { generateEntropyString, generateRSAKeypair } from '../../utils/utils';
 
 interface EventInfo {
   id: string,
@@ -20,6 +21,8 @@ function Event(props: { event: EventInfo, width: number}) {
 
   const userContext = useContext(UserContext);
 
+  const [mnemonic, setMnemonic] = useState("");
+
   const buyTicket = async () => {
 
     // Check if wallet is connected
@@ -30,7 +33,9 @@ function Event(props: { event: EventInfo, width: number}) {
 
     // Buy ticket
     const entropy = generateEntropyString();
-    secretTickets.buyTicket(props.event.id, entropy).then(() => {
+    const {publicKey} = await generateRSAKeypair(mnemonic);
+    const pk = pki.publicKeyToPem(publicKey);
+    secretTickets.buyTicket(props.event.id, entropy, pk).then(() => {
       alert("Successfully purchased ticket.")
     }).catch((error) => {
       alert(`Unable to buy ticket:\n${error.cause}`)
@@ -41,17 +46,27 @@ function Event(props: { event: EventInfo, width: number}) {
 
   return (
     <li style={{width: widthString, margin: "10px 20px"}}>
-      <Card elevation={5}>
+      <Card elevation={5} style={{width: widthString}}>
       {/* Image */}
-      <img src={`https://gateway.pinata.cloud/ipfs/${props.event.cid}`} alt="Event"></img>
+      <img src={`https://aqua-additional-bat-799.mypinata.cloud/ipfs/${props.event.cid}`} alt="Event"></img>
       {/* Description */}
       <div style={{padding: "0px 10px"}}>
       <Typography variant="body2" style={{margin: "10px 0px 0px 0px"}}>{props.event.name}</Typography>
       <Typography variant="body2" style={{margin: "20px 0px 0px 0px"}}>{props.event.venue}</Typography>
       <Typography variant="caption">{`${props.event.price} TICK`}</Typography>
       </div>
+
       {/* Button */}
-      <div style={{display: "flex", justifyContent: "center", padding: "20px 0px"}}>
+      <div style={{display: "flex", flexDirection: "column", alignContent: "center", padding: "20px 0px"}}>
+      <TextField
+            name="mnemonic"
+            label="Mnemonic"
+            value={mnemonic}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setMnemonic(event.currentTarget.value);
+            }}
+            style={{ width: "180px", margin: "10px" }}
+          />
       <Button variant='outlined' onClick={buyTicket} style={{margin: "auto"}}>Buy ticket</Button>
       </div>
       </Card>

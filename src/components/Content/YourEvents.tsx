@@ -5,14 +5,17 @@ import { Button, Divider, TextField, Typography } from '@mui/material';
 
 import { UserContext } from "../../contexts/user-context";
 import { secretTickets } from "../../contracts/secretTickets"
+import { generateRSAKeypair } from '../../utils/utils';
 
 export default function YourEvents() {
 
   const userContext = useContext(UserContext);
 
   const [ticketID, setTicketID] = useState("");
-  const [encryptedSecret, setEncryptedSecret] = useState("");
   const [secret, setSecret] = useState("");
+
+  const [mnemonic, setMnemonic] = useState("");
+  const [encryptedSecret, setEncryptedSecret] = useState("");
 
   const verifyTicket = async () => {
     // Check if wallet is connected
@@ -22,7 +25,7 @@ export default function YourEvents() {
     }
 
     // Clear secret field
-    setSecret("");
+    setSecret("Loading...");
 
     // Check valid number
     const ticketID_num = Number(ticketID);
@@ -77,7 +80,6 @@ export default function YourEvents() {
 
     // Try verify guest
     secretTickets.verifyGuest(ticketID, secret).then((resp) => {
-      console.log(resp)
       alert("Ticket and guest are valid.")
     }).catch((err) => {
       alert(`Unable to verify ticket:\n${err.cause}`)
@@ -86,79 +88,94 @@ export default function YourEvents() {
   }
 
   const decryptSecret = async () => {
-    setEncryptedSecret("69")
+
+    const secret = encryptedSecret;
+    setEncryptedSecret("Loading...");
+    const { privateKey } = await generateRSAKeypair(mnemonic);
+    let decrypted = await privateKey.decrypt(secret)
+    setEncryptedSecret(decrypted);
   }
 
   return (
     <div>
       <Typography variant="h3" style={{ textAlign: "center", margin: "20px" }}>Your Events</Typography>
       {userContext?.isAuthenticated ?
-      <div>
-      <EventsPanelAttending />
-      <Divider style={{ margin: "20px" }}></Divider>
-      <EventsPanelOrganising />
-      <Divider style={{ margin: "20px" }}></Divider>
-
-      <div style={{ margin: "0px 20px 40px 20px", display: "flex", justifyContent: "space-around" }}>
         <div>
-          <Typography variant="h6" style={{ textAlign: "center" }}>Verify tickets and guests</Typography>
-          <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-            <TextField
-              name="ticket-id"
-              label="Ticket ID"
-              value={ticketID}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setTicketID(event.currentTarget.value);
-              }}
-              style={{ width: "200px", margin: "10px" }}
-            />
-            <TextField
-              name="guest-secret"
-              label="Secret"
-              inputProps={{ style: { textAlign: 'center' } }}
-              value={secret}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setSecret(event.currentTarget.value);
-              }}
-              style={{ width: "200px", margin: "10px" }}
-            />
-          </div>
-          <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-            <Button
-              variant="outlined"
-              onClick={verifyTicket}
-              style={{ margin: "10px 30px", width: "150px" }}>
-              Verify ticket
-            </Button>
-            <Button
-              variant="outlined"
-              onClick={verifyGuest}
-              style={{ margin: "10px 30px", width: "150px" }}>
-              Verify guest
-            </Button>
+          <EventsPanelAttending />
+          <Divider style={{ margin: "20px" }}></Divider>
+          <EventsPanelOrganising />
+          <Divider style={{ margin: "20px" }}></Divider>
+
+          <div style={{ margin: "0px 20px 40px 20px", display: "flex", justifyContent: "space-around" }}>
+            <div>
+              <Typography variant="h6" style={{ textAlign: "center" }}>Verify tickets and guests</Typography>
+              <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <TextField
+                  name="ticket-id"
+                  label="Ticket ID"
+                  value={ticketID}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    setTicketID(event.currentTarget.value);
+                  }}
+                  style={{ width: "200px", margin: "10px" }}
+                />
+                <TextField
+                  name="guest-secret"
+                  label="Secret"
+                  value={secret}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    setSecret(event.currentTarget.value);
+                  }}
+                  style={{ width: "200px", margin: "10px" }}
+                />
+              </div>
+              <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <Button
+                  variant="outlined"
+                  onClick={verifyTicket}
+                  style={{ margin: "10px 30px", width: "150px" }}>
+                  Verify ticket
+                </Button>
+                <Button
+                  variant="outlined"
+                  onClick={verifyGuest}
+                  style={{ margin: "10px 30px", width: "150px" }}>
+                  Verify guest
+                </Button>
+              </div>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <Typography variant="h6" style={{ textAlign: "center" }}>Decrypt secret</Typography>
+              <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <TextField
+                  name="mnemonic"
+                  label="Mnemonic"
+                  value={mnemonic}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    setMnemonic(event.currentTarget.value);
+                  }}
+                  style={{ width: "200px", margin: "10px" }}
+                />
+                <TextField
+                  name="guest-secret"
+                  label="Encrypted secret"
+                  value={encryptedSecret}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    setEncryptedSecret(event.currentTarget.value);
+                  }}
+                  style={{ width: "200px", margin: "10px" }}
+                />
+              </div>
+              <Button
+                variant="outlined"
+                onClick={decryptSecret}
+                style={{ margin: "10px 30px", width: "150px" }}>
+                Decrypt
+              </Button>
+            </div>
           </div>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <Typography variant="h6" style={{ textAlign: "center" }}>Decrypt secret</Typography>
-          <TextField
-            name="guest-secret"
-            label="Encrypted secret"
-            value={encryptedSecret}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setEncryptedSecret(event.currentTarget.value);
-            }}
-            style={{ width: "200px", margin: "10px 0px" }}
-          />
-          <Button
-            variant="outlined"
-            onClick={decryptSecret}
-            style={{ width: "150px" }}>
-            Decrypt
-          </Button>
-        </div>
-      </div>
-      </div>
-      : <h3 style = {{margin: "40px"}}>You are not logged in. </h3> }
+        : <h3 style={{ margin: "40px" }}>You are not logged in. </h3>}
     </div>
   )
 } 

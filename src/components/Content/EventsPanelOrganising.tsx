@@ -12,7 +12,8 @@ interface EventInfo {
   name: string,
   venue: string,
   category: string,
-  tags: string[]
+  tags: string[],
+  tickets_left: number
   cid: string
 }
 
@@ -22,15 +23,15 @@ function Event(props: { event: EventInfo, width: number }) {
 
   return (
     <li style={{ width: widthString, margin: "10px 20px" }}>
-      <Card elevation={5}>
+      <Card elevation={5} style={{ width: widthString }}>
         {/* Image */}
-        <img src={`https://gateway.pinata.cloud/ipfs/${props.event.cid}`} alt="Event"></img>
+        <img src={`https://aqua-additional-bat-799.mypinata.cloud/ipfs/${props.event.cid}`} alt="Event"></img>
         {/* Description */}
         <div style={{ padding: "0px 10px" }}>
-        <Typography variant="body2" style={{margin: "10px 0px 0px 0px"}}>{props.event.name}</Typography>
-      <Typography variant="body2" style={{margin: "20px 0px 0px 0px"}}>{props.event.venue}</Typography>
-      <Typography variant="body2" style={{margin: "0px 0px 0px 0px"}}>Event ID: {props.event.id}</Typography>
-      <Typography variant="body2" style={{margin: "20px 0px 10px 0px"}}>Tickets left: IDK</Typography>
+          <Typography variant="body2" style={{ margin: "10px 0px 0px 0px" }}>{props.event.name}</Typography>
+          <Typography variant="body2" style={{ margin: "20px 0px 0px 0px" }}>{props.event.venue}</Typography>
+          <Typography variant="body2" style={{ margin: "0px 0px 0px 0px" }}>Event ID: {props.event.id}</Typography>
+          <Typography variant="body2" style={{ margin: "20px 0px 10px 0px" }}>Tickets left: {props.event.tickets_left}</Typography>
         </div>
       </Card>
     </li>
@@ -56,11 +57,14 @@ export default function EventsPanelOrganising() {
     }
 
     const resp = await secretTickets.events(getAddress()!);
+    console.log(resp);
     const event_ids = resp.events;
+    const tickets = resp.tickets_left;
 
     let events = []
     for (let i = 0; i < event_ids.length; i++) {
       const event_id = event_ids[i];
+      const tickets_left = tickets[i];
       const filter = {
         status: 'pinned',
         metadata: {
@@ -73,6 +77,7 @@ export default function EventsPanelOrganising() {
         }
       }
       const pinataEvents = await pinata.pinList(filter);
+      console.log(pinataEvents)
       const event = pinataEvents.rows[0]
       const metadata = Object(event.metadata)
       var eventInfo: EventInfo = {
@@ -81,6 +86,7 @@ export default function EventsPanelOrganising() {
         venue: metadata.keyvalues.venue,
         category: metadata.keyvalues.category,
         tags: [],
+        tickets_left: tickets_left,
         cid: event.ipfs_pin_hash
       }
       for (let i = 0; i < Number(metadata.keyvalues.numTags); i++) {
@@ -114,15 +120,15 @@ export default function EventsPanelOrganising() {
 
   return (
     <div>
-      <Typography variant="h5" style={{marginLeft: "20px", marginBottom: "10px"}}>Organising</Typography>
+      <Typography variant="h5" style={{ marginLeft: "20px", marginBottom: "10px" }}>Organising</Typography>
       <div style={{ width: "100%", overflowX: "auto" }}>
-      {EventsList.length ?
+        {EventsList.length ?
           <ul style={{ listStyleType: "none", display: "flex", margin: "0", "padding": "0", width: listWidth, height: "100%" }}>
             {EventsList}
           </ul>
           : loading
-            ? <Typography variant="body1" style={{margin: "40px"}}>Loading...</Typography>
-            : <Typography variant="body1" style={{margin: "40px"}}>You are not organising any events</Typography>
+            ? <Typography variant="body1" style={{ margin: "40px" }}>Loading...</Typography>
+            : <Typography variant="body1" style={{ margin: "40px" }}>You are not organising any events</Typography>
         }
       </div>
     </div>
