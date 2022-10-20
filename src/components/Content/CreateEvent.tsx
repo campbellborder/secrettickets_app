@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Autocomplete, Button, Stack, TextField, Chip } from '@mui/material';
+import { Autocomplete, Button, Stack, TextField, Chip, Typography } from '@mui/material';
 import { coinConvert } from '@stakeordie/griptape.js';
 import NodeFormData from 'form-data';
 import axios from 'axios';
@@ -101,7 +101,7 @@ function CreateEventForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} style={{display: "flex", justifyContent: "center"}}>
       <Stack>
 
         {/* Name */}
@@ -110,6 +110,7 @@ function CreateEventForm() {
           name="name"
           label="Name"
           value={name}
+          style={{margin: "10px", width: "300px"}}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             setName(event.currentTarget.value);
           }}
@@ -121,6 +122,7 @@ function CreateEventForm() {
           name="venue"
           label="Venue"
           value={venue}
+          style={{margin: "10px", width: "300px"}}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             setVenue(event.currentTarget.value);
           }}
@@ -132,6 +134,7 @@ function CreateEventForm() {
           name="category"
           label="Category"
           value={category}
+          style={{margin: "10px", width: "300px"}}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             setCategory(event.currentTarget.value);
           }}
@@ -143,6 +146,7 @@ function CreateEventForm() {
           freeSolo
           value={tags}
           options={tags_options}
+          style={{margin: "10px", width: "300px"}}
           onChange={(_, values: string[]) => { setTags(values) }}
           renderTags={(value: readonly string[], getTagProps) =>
             value.map((option: string, index: number) => (
@@ -163,6 +167,7 @@ function CreateEventForm() {
           name="num-tickets"
           label="Number of tickets"
           value={numTickets}
+          style={{margin: "10px", width: "300px"}}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             setNumTickets(event.currentTarget.value);
           }}
@@ -174,6 +179,7 @@ function CreateEventForm() {
           name="price"
           label="Price (SCRT)"
           value={price}
+          style={{margin: "10px", width: "300px"}}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             setPrice(event.currentTarget.value);
           }}
@@ -184,23 +190,30 @@ function CreateEventForm() {
           required
           type="file"
           name="image"
+          style={{margin: "10px auto", width: "175px", textAlign: "center"}}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             setImage(event.currentTarget.files![0])
           }} />
 
         {/* Submit button */}
-        <Button type="submit" variant="outlined">Submit</Button>
+        <Button type="submit" variant="outlined" style={{margin: "10px", width: "300px"}}>Submit</Button>
       </Stack>
     </form>)
 }
 
 export default function CreateEvent() {
 
+  const userContext = useContext(UserContext);
+
   return (
     <div>
-      <h1>Create Event</h1>
+      <Typography variant="h3" style={{ textAlign: "center", margin: "20px" }}>Create Event</Typography>
       {/* FORM */}
-      <CreateEventForm />
+      {userContext!.isAuthenticated
+      ? <CreateEventForm />
+      : <h3 style = {{margin: "40px"}}>You are not logged in. </h3>
+      }
+      
 
     </div>
   )

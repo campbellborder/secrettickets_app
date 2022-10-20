@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import pinataSDK from "@pinata/sdk";
 import { getAddress } from '@stakeordie/griptape.js';
+import { Card, Typography } from '@mui/material';
 
 import { UserContext } from "../../contexts/user-context";
 import { secretTickets } from "../../contracts/secretTickets"
@@ -33,14 +34,18 @@ function Ticket(props: { ticket: TicketInfo, width: number }) {
   }
 
   return (
-    <li style={{ display: "block", height: "280px", width: widthString, background: "red", margin: "15px" }}>
+    <li style={{width: widthString, margin: "10px 20px"}}>
+      <Card elevation={5}>
       {/* Image */}
       <img src={`https://gateway.pinata.cloud/ipfs/${props.ticket.cid}`} alt="Event"></img>
       {/* Description */}
-      <h4>{props.ticket.name}</h4>
-      <h5>{props.ticket.venue}</h5>
-      <h5>Ticket ID: {props.ticket.ticket_id}</h5>
-      <h5>State: {num_to_state(props.ticket.state)}</h5>
+      <div style={{padding: "0px 10px"}}>
+      <Typography variant="body2" style={{margin: "10px 0px 0px 0px"}}>{props.ticket.name}</Typography>
+      <Typography variant="body2" style={{margin: "20px 0px 0px 0px"}}>{props.ticket.venue}</Typography>
+      <Typography variant="body2" style={{margin: "0px 0px 0px 0px"}}>Ticket ID: {props.ticket.ticket_id}</Typography>
+      <Typography variant="body2" style={{margin: "20px 0px 10px 0px"}}>State: {num_to_state(props.ticket.state)}</Typography>
+      </div>
+      </Card>
     </li>
   )
 }
@@ -48,6 +53,7 @@ function Ticket(props: { ticket: TicketInfo, width: number }) {
 export default function EventsPanelAttending() {
 
   const [tickets, setTickets] = useState<TicketInfo[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const userContext = useContext(UserContext);
 
@@ -58,6 +64,7 @@ export default function EventsPanelAttending() {
 
     // Check if wallet is connected
     if (!userContext?.isAuthenticated) {
+      setLoading(false);
       return;
     }
 
@@ -97,23 +104,26 @@ export default function EventsPanelAttending() {
         cid: event.ipfs_pin_hash
       }
       for (let i = 0; i < Number(metadata.keyvalues.numTags); i++) {
-        ticketInfo.tags.push(metadata.keyvalues[`tag${i}`])
+        ticketInfo.tags.push(metadata.keyvalues[`tag${i}`]);
       }
 
-      tickets.push(ticketInfo)
+      tickets.push(ticketInfo);
     }
-    setTickets(tickets)
+    setTickets(tickets);
+    setLoading(false);
   }
 
   // Load events effect
   useEffect(() => {
+    setTickets([])
+    setLoading(true);
     load_tickets().catch((error) => {
       alert("Unable to load events")
       console.log(error)
     })
   }, [userContext?.address])
 
-  const ticketWidth = 250;
+  const ticketWidth = 200;
 
   // Create list of events
   var TicketsList = tickets.map((ticket) => {
@@ -124,11 +134,16 @@ export default function EventsPanelAttending() {
 
   return (
     <div>
-      <h3>Attending</h3>
-      <div style={{ background: "green", width: "100%", height: "310px", overflowX: "auto", overflowY: "hidden" }}>
-        <ul style={{ listStyleType: "none", display: "flex", margin: "0", "padding": "0", width: listWidth }}>
-          {TicketsList}
-        </ul>
+      <Typography variant="h5" style={{marginLeft: "20px", marginBottom: "10px"}}>Attending</Typography>
+      <div style={{ width: "100%", overflowX: "auto" }}>
+      {TicketsList.length ?
+          <ul style={{ listStyleType: "none", display: "flex", margin: "0", "padding": "0", width: listWidth, height: "100%" }}>
+            {TicketsList}
+          </ul>
+          : loading
+            ? <Typography variant="body1" style={{margin: "40px"}}>Loading...</Typography>
+            : <Typography variant="body1" style={{margin: "40px"}}>You are not attending any events</Typography>
+        }
       </div>
     </div>
   )

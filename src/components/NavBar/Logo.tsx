@@ -6,7 +6,7 @@ export function Logo() {
 
   return (
     <Box
-      sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}
+      sx={{ display: "flex", flexDirection: "row", alignItems: "center", textDecoration: "none", color: "0xFFFFFF" }}
       flexGrow={1}
       component={Link}
       to="/"
@@ -16,7 +16,7 @@ export function Logo() {
         alt="logo"
         style={{ height: 50 }}
       />
-      <Typography>NFTickets</Typography>
+      <Typography variant="h5" sx={{ color: "black", paddingLeft:"10px"}}>SecreTickets</Typography>
     </Box>
   )
 }

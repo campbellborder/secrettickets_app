@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import pinataSDK from "@pinata/sdk";
 import { getAddress } from '@stakeordie/griptape.js';
+import { Card, Typography } from '@mui/material';
 
 import { UserContext } from "../../contexts/user-context";
 import { secretTickets } from "../../contracts/secretTickets"
+import Events from './Events';
 
 interface EventInfo {
   id: string,
@@ -19,13 +21,18 @@ function Event(props: { event: EventInfo, width: number }) {
   const widthString = props.width.toString() + "px"
 
   return (
-    <li style={{ display: "block", height: "220px", width: widthString, background: "red", margin: "15px" }}>
-      {/* Image */}
-      <img src={`https://gateway.pinata.cloud/ipfs/${props.event.cid}`} alt="Event"></img>
-      {/* Description */}
-      <h4>{props.event.name}</h4>
-      <h5>{props.event.venue}</h5>
-
+    <li style={{ width: widthString, margin: "10px 20px" }}>
+      <Card elevation={5}>
+        {/* Image */}
+        <img src={`https://gateway.pinata.cloud/ipfs/${props.event.cid}`} alt="Event"></img>
+        {/* Description */}
+        <div style={{ padding: "0px 10px" }}>
+        <Typography variant="body2" style={{margin: "10px 0px 0px 0px"}}>{props.event.name}</Typography>
+      <Typography variant="body2" style={{margin: "20px 0px 0px 0px"}}>{props.event.venue}</Typography>
+      <Typography variant="body2" style={{margin: "0px 0px 0px 0px"}}>Event ID: {props.event.id}</Typography>
+      <Typography variant="body2" style={{margin: "20px 0px 10px 0px"}}>Tickets left: IDK</Typography>
+        </div>
+      </Card>
     </li>
   )
 }
@@ -33,6 +40,7 @@ function Event(props: { event: EventInfo, width: number }) {
 export default function EventsPanelOrganising() {
 
   const [events, setEvents] = useState<EventInfo[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const userContext = useContext(UserContext);
 
@@ -43,6 +51,7 @@ export default function EventsPanelOrganising() {
 
     // Check if wallet is connected
     if (!userContext?.isAuthenticated) {
+      setLoading(false);
       return;
     }
 
@@ -80,18 +89,21 @@ export default function EventsPanelOrganising() {
 
       events.push(eventInfo)
     }
-    setEvents(events)
+    setEvents(events);
+    setLoading(false);
   }
 
   // Load events effect
   useEffect(() => {
+    setEvents([])
+    setLoading(true);
     load_events().catch((error) => {
       alert("Unable to load events")
       console.log(error)
     })
   }, [userContext?.address])
 
-  const eventWidth = 250
+  const eventWidth = 200
 
   // Create list of events
   var EventsList = events.map((event) => {
@@ -102,11 +114,16 @@ export default function EventsPanelOrganising() {
 
   return (
     <div>
-      <h3>Organising</h3>
-      <div style={{ background: "green", width: "100%", height: "250px", overflowX: "auto", overflowY: "hidden" }}>
-        <ul style={{ listStyleType: "none", display: "flex", margin: "0", "padding": "0", width: listWidth }}>
-          {EventsList}
-        </ul>
+      <Typography variant="h5" style={{marginLeft: "20px", marginBottom: "10px"}}>Organising</Typography>
+      <div style={{ width: "100%", overflowX: "auto" }}>
+      {EventsList.length ?
+          <ul style={{ listStyleType: "none", display: "flex", margin: "0", "padding": "0", width: listWidth, height: "100%" }}>
+            {EventsList}
+          </ul>
+          : loading
+            ? <Typography variant="body1" style={{margin: "40px"}}>Loading...</Typography>
+            : <Typography variant="body1" style={{margin: "40px"}}>You are not organising any events</Typography>
+        }
       </div>
     </div>
   )

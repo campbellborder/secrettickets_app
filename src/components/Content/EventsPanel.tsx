@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import pinataSDK from "@pinata/sdk";
-import { Button, Card } from '@mui/material';
+import { Button, Card, Typography } from '@mui/material';
 
 import { UserContext } from "../../contexts/user-context";
 import { secretTickets } from "../../contracts/secretTickets"
@@ -40,18 +40,18 @@ function Event(props: { event: EventInfo, width: number}) {
   const widthString = props.width.toString() + "px"
 
   return (
-    <li style={{ display: "block", width: widthString, padding: "0 20px", height: "90%"}}>
-      <Card elevation={5} style={{height: "100%"}}>
+    <li style={{width: widthString, margin: "10px 20px"}}>
+      <Card elevation={5}>
       {/* Image */}
       <img src={`https://gateway.pinata.cloud/ipfs/${props.event.cid}`} alt="Event"></img>
       {/* Description */}
       <div style={{padding: "0px 10px"}}>
-      <h4>{props.event.name}</h4>
-      <h5>{props.event.venue}</h5>
-      <h5>{`${props.event.price} TICK`}</h5>
+      <Typography variant="body2" style={{margin: "10px 0px 0px 0px"}}>{props.event.name}</Typography>
+      <Typography variant="body2" style={{margin: "20px 0px 0px 0px"}}>{props.event.venue}</Typography>
+      <Typography variant="caption">{`${props.event.price} TICK`}</Typography>
       </div>
       {/* Button */}
-      <div style={{display: "flex", justifyContent: "center", paddingBottom: "20px"}}>
+      <div style={{display: "flex", justifyContent: "center", padding: "20px 0px"}}>
       <Button variant='outlined' onClick={buyTicket} style={{margin: "auto"}}>Buy ticket</Button>
       </div>
       </Card>
@@ -117,13 +117,19 @@ export default function EventsPanel(props: { type: string }) {
   const listWidth = (EventsList.length * eventWidth).toString() + "px"
 
   return (
-    <div>
-      <h3 style={{marginLeft: "20px"}}>{`${props.type}s`}</h3>
-      <div style={{ width: "100%", height: "360px", overflowX: "auto" }}>
-        <ul style={{ listStyleType: "none", display: "flex", margin: "0", "padding": "0", width: listWidth, height: "100%" }}>
-          {EventsList}
-        </ul>
+    <React.Fragment>
+    <div style={{marginBottom: "20px"}}>
+      <Typography variant="h5" style={{marginLeft: "20px", marginBottom: "10px"}}>{`${props.type}s`}</Typography>
+      <div style={{ width: "100%", overflowX: "auto" }}>
+        {EventsList.length
+        ? <ul style={{ listStyleType: "none", display: "flex", margin: "0", "padding": "0", width: listWidth, height: "100%" }}>
+            {EventsList}
+          </ul>
+        : <Typography variant="body1" style={{margin: "40px"}}>Loading...</Typography>
+        }
+
       </div>
     </div>
+    </React.Fragment>
   )
 } 

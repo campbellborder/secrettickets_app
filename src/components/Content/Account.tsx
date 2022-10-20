@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { getAddress, getNativeCoinBalance, coinConvert, onAccountAvailable } from '@stakeordie/griptape.js';
-import { Button, TextField } from '@mui/material';
+import { Button, Divider, TextField, Typography } from '@mui/material';
 
 
 import { UserContext } from "../../contexts/user-context";
@@ -59,40 +59,44 @@ export default function Account() {
     }
   }
 
-  if (!userContext?.isAuthenticated) {
-    return (
-      <React.Fragment>
-        <h1>Account</h1>
-        <h2>Please log in to view account information</h2>
-      </React.Fragment>
-    )
-  }
-
   return (
     <React.Fragment>
-      <h1>Account</h1>
-      <h4>Your address: {address}</h4>
-      <h4>Your SCRT balance: {SCRTbalance}</h4>
-      <h4>Your TICK balance: {TICKbalance}</h4>
+      <Typography variant="h3" style={{ textAlign: "center", margin: "20px" }}>Account</Typography>
+      {userContext?.isAuthenticated
+      ?
+      <div style= {{margin: "20px"}}>
+      <Typography variant="h5">Address:</Typography>
+      <Typography variant="body1" style={{margin: "10px"}}>{address}</Typography>
+      <Divider style={{margin: "10px 0px"}}></Divider>
+      <Typography variant="h5">Balances:</Typography>
+      <Typography variant="body1" style={{margin: "10px"}}>SCRT: {SCRTbalance}</Typography>
+      <Typography variant="body1" style={{margin: "10px"}}>TICK: {TICKbalance}</Typography>
+      <Divider style={{margin: "10px 0px"}}></Divider>
+      <Typography variant="h5">Deposit:</Typography>
       <TextField
         name="deposit-amount"
         label="Amount"
         value={depositAmount}
+        style={{ width: "200px", margin: "10px" }}
         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
           setDepositAmount(event.currentTarget.value);
         }}
       />
-      <Button variant="outlined" onClick={make_deposit}>Deposit</Button>
+      <Button variant="outlined" onClick={make_deposit} style={{ width: "120px", margin: "18px" }}>Deposit</Button>
+      <Divider style={{margin: "10px 0px"}}></Divider>
+      <Typography variant="h5">Withdraw:</Typography>
       <TextField
         name="withdraw-amount"
         label="Amount"
         value={withdrawAmount}
+        style={{ width: "200px", margin: "10px" }}
         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
           setWithdrawAmount(event.currentTarget.value);
         }}
       />
-      <Button variant="outlined" onClick={make_withdrawal}>Withdraw</Button>
-      <Button variant="outlined" onClick={getAccountInfo}>Refresh</Button>
+      <Button variant="outlined" onClick={make_withdrawal} style={{ width: "120px", margin: "18px" }}>Withdraw</Button>
+    </div>
+    : <h3 style = {{margin: "40px"}}>You are not logged in. </h3> }
     </React.Fragment>
   )
 

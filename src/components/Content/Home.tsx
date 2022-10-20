@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import pinataSDK, { PinataPinListResponseRow } from "@pinata/sdk";
 
 import EventsPanel from './EventsPanel';
+import { Typography } from '@mui/material';
 
 export default function Home() {
 
@@ -40,12 +41,16 @@ export default function Home() {
   return (
     <React.Fragment>
       <div>
-        <h1 style={{ textAlign: "center" }}>NFTickets</h1>
-        <h2 style={{ textAlign: "center" }} >The Future of Ticketing</h2>
+        <Typography variant="h2" style={{ textAlign: "center", margin: "20px" }}>SecreTickets</Typography>
+        <Typography variant="h5" style={{ textAlign: "center" }} >Private. Trustless. Awesome.</Typography>
       </div>
-      <ul>
-        {EventsPanels}
-      </ul>
+      {EventsPanels.length
+        ? <ul>
+          {EventsPanels}
+        </ul>
+        : <Typography variant="body1" style={{margin: "40px"}}>Loading...</Typography>
+      }
+
     </React.Fragment>
   )
 } 
