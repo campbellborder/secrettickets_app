@@ -11,7 +11,7 @@ export default function Account() {
 
   const [address, setAddress] = useState("");
   const [SCRTbalance, setSCRTBalance] = useState("");
-  const [TICKbalance, setTICKBalance] = useState("");
+  const [STKbalance, setSTKBalance] = useState("");
   const [depositAmount, setDepositAmount] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
 
@@ -25,7 +25,7 @@ export default function Account() {
     var SCRT = await getNativeCoinBalance();
     setSCRTBalance(coinConvert(SCRT, 6, 'human'));
     var msg = await secretTickets.balance(temp_address!);
-    setTICKBalance(coinConvert(msg.balance.toString(), 6, 'human'));
+    setSTKBalance(coinConvert(msg.balance.toString(), 6, 'human'));
   }
 
   // Handle loading of account info
@@ -70,7 +70,7 @@ export default function Account() {
       <Divider style={{margin: "10px 0px"}}></Divider>
       <Typography variant="h5">Balances:</Typography>
       <Typography variant="body1" style={{margin: "10px"}}>SCRT: {SCRTbalance}</Typography>
-      <Typography variant="body1" style={{margin: "10px"}}>TICK: {TICKbalance}</Typography>
+      <Typography variant="body1" style={{margin: "10px"}}>STK: {STKbalance}</Typography>
       <Divider style={{margin: "10px 0px"}}></Divider>
       <Typography variant="h5">Deposit:</Typography>
       <TextField

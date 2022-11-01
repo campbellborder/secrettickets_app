@@ -53,7 +53,7 @@ function Event(props: { event: EventInfo, width: number}) {
       <div style={{padding: "0px 10px"}}>
       <Typography variant="body2" style={{margin: "10px 0px 0px 0px"}}>{props.event.name}</Typography>
       <Typography variant="body2" style={{margin: "20px 0px 0px 0px"}}>{props.event.venue}</Typography>
-      <Typography variant="caption">{`${props.event.price} TICK`}</Typography>
+      <Typography variant="caption">{`${props.event.price} STK`}</Typography>
       </div>
 
       {/* Button */}
